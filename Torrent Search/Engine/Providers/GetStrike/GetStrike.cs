@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -14,10 +15,10 @@ namespace Torrent_Search.Engine.Providers.GetStrike
         public override string searchurl { get { return "https://getstrike.net/api/v2/torrents/search/?phrase={0}"; } }
         public override string homepage { get { return "https://getstrike.net/torrents/"; } }
 
-        public override List<TorrentResult> getSearchResults(string query)
+        public async Task<List<TorrentResult>> getSearchResults(string query)
         {
             var torrentResults = new List<TorrentResult>();
-            var r = getWebResponse(query);
+            string r = await doWebRequest(query);
             var j = JsonConvert.DeserializeObject<JSON.Rootobject>(r);
 
             foreach (JSON.Torrent torrent in j.torrents)

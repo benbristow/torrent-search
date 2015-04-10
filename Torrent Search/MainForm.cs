@@ -27,6 +27,15 @@ namespace Torrent_Search
 
         }
 
+        private async Task doSearch(string query)
+        {
+            //Async search task
+            var engine = new Engine.SearchEngine();
+            var queryTask =  engine.queryResults(query);
+            var sortableResults = new BindingListView<TorrentResult>(await queryTask);
+            dataGridView1.DataSource = sortableResults;
+        }
+
 
         private void queryTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -41,43 +50,27 @@ namespace Torrent_Search
                 }
                 else
                 {
-                    //Do search
-                    var engine = new Engine.SearchEngine();
-                    var results = engine.getResults(queryTextBox.Text);
-                    var sortableResults = new BindingListView<Engine.TorrentResult>(results);
-                    dataGridView1.DataSource = sortableResults;
+                    //Do search!
+                    doSearch(queryTextBox.Text);
+                    //Disable annoying 'ding' sound.
+                    e.Handled = true;
                 }
             }
         }
 
+        /* Data Grid View */
+
+        private void dataGridView1_DoubleClick(object sender, EventArgs e)
+        {
+            //Double click
+            downloadSelectedResult();
+        }
 
         /* Context Menu */
         private void downloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Download
-
-            //Favour magnet over torrents
-            var result = getSelectedResult();
-            if (result != null)
-            {
-                if (result.magnet != null)
-                {
-                    openLink(result.magnet);
-                    return;
-                }
-
-                if (result.torrentFile != null)
-                {
-                    openLink(result.torrentFile);
-                    return;
-                }
-
-                MessageBox.Show("Couldn't find torrent link.");
-            }
-            else
-            {
-                MessageBox.Show("No torrent selected!");
-            }
+            downloadSelectedResult();
         }
 
         private void openURLToolStripMenuItem_Click(object sender, EventArgs e)
@@ -107,14 +100,38 @@ namespace Torrent_Search
             aboutFrm.BringToFront();
         }
 
-
-
         /* Misc Functions */
+
+        private void downloadSelectedResult()
+        {
+            //Download
+
+            //Favour magnet over torrents
+            var result = getSelectedResult();
+            if (result != null)
+            {
+                if (result.magnet != null)
+                {
+                    openLink(result.magnet);
+                    return;
+                }
+
+                if (result.torrentFile != null)
+                {
+                    openLink(result.torrentFile);
+                    return;
+                }
+
+                MessageBox.Show("Couldn't find torrent link.");
+            }
+
+        }
 
         private Engine.TorrentResult getSelectedResult()
         {
             if (dataGridView1.SelectedRows.Count == 0)
             {
+                MessageBox.Show("No torrent selected!");
                 return null;
             }
             

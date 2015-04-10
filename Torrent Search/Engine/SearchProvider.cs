@@ -13,16 +13,11 @@ namespace Torrent_Search.Engine
         public virtual string searchurl { get; protected set; }
         public virtual string homepage { get; protected set; }
 
-        public virtual List<TorrentResult> getSearchResults(string query)
-        {           
-            return null;
-        }
-
-        protected string getWebResponse(string query)
+        protected async Task<string> doWebRequest(string query)
         {
-            //Get JSON/XML etc. data using search URL + query
             var wc = new WebClient();
-            return wc.DownloadString(new Uri(string.Format(searchurl, query)));            
+            string r = await wc.DownloadStringTaskAsync(new Uri(string.Format(searchurl, query)));
+            return r;
         }
     }
 }

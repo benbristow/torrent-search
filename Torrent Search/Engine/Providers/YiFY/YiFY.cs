@@ -14,10 +14,10 @@ namespace Torrent_Search.Engine.Providers.YiFY
         public override string searchurl { get { return "https://yts.im/api/v2/list_movies.json?query_term={0}"; } }
         public override string homepage { get { return "https://yts.im/"; } }
 
-        public override List<TorrentResult> getSearchResults(string query)
+        public async Task<List<TorrentResult>> getSearchResults(string query)
         {
             var torrentResults = new List<TorrentResult>();
-            var r = getWebResponse(query);
+            var r = await doWebRequest(query);
             var j = JsonConvert.DeserializeObject<JSON.Rootobject>(r);
 
             foreach (JSON.Movie movie in j.data.movies)
