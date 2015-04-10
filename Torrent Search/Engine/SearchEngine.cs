@@ -18,8 +18,17 @@ namespace Torrent_Search.Engine
             var yify = new Engine.Providers.YiFY.YiFY();
             var yifyResultsTask = yify.getSearchResults(query);
 
-            results.AddRange(await strikeResultsTask);
-            results.AddRange(await yifyResultsTask);
+            try
+            {
+                results.AddRange(await strikeResultsTask);
+            }
+            catch { }
+
+            try
+            {
+                results.AddRange(await yifyResultsTask);
+            }
+            catch { }
 
             return results;
         }

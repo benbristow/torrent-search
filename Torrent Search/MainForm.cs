@@ -32,8 +32,13 @@ namespace Torrent_Search
             //Async search task
             var engine = new Engine.SearchEngine();
             var queryTask =  engine.queryResults(query);
-            var sortableResults = new BindingListView<TorrentResult>(await queryTask);
+            var sortableResults = new BindingListView<TorrentResult>(await queryTask);            
             dataGridView1.DataSource = sortableResults;
+
+            if (sortableResults.Count == 0)
+            {
+                MessageBox.Show("No torrents found!");
+            }
         }
 
 
