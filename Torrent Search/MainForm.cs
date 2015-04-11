@@ -29,16 +29,29 @@ namespace Torrent_Search
 
         private async Task doSearch(string query)
         {
-            //Async search task
+            //Create search engine instance
             var engine = new Engine.SearchEngine();
+
+            //Perform search with task
             var queryTask =  engine.queryResults(query);
+
+            //Disable search bar
+            queryTextBox.Enabled = false;
+
+            //Get results from task and add to binding list view (so we can sort)
             var sortableResults = new BindingListView<TorrentResult>(await queryTask);            
+
+            //Set DGV datasource so user can see
             dataGridView1.DataSource = sortableResults;
 
+            //We found no torrents, show an error.
             if (sortableResults.Count == 0)
             {
                 MessageBox.Show("No torrents found!");
             }
+
+            //Renable search bar
+            queryTextBox.Enabled = true;
         }
 
 
@@ -70,6 +83,43 @@ namespace Torrent_Search
             //Double click
             downloadSelectedResult();
         }
+
+        private async void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                //don't do anything if no row selected
+                return;
+            }
+
+            //Clear current file listing.
+            fileListingBox.Items.Clear();
+            fileListingBox.Items.Add("Loading file listing...");   
+
+            //Update file listing on result section
+            try
+            {
+                //Get selected torrent
+                var result = getSelectedResult();
+
+                //Create task to get file listing
+                var fileListingTask = result.getFileListing();
+                
+                //Await
+                List<string> fileListing = await fileListingTask;
+
+                //Clear loading message
+                fileListingBox.Items.Clear();
+
+                //Add to list
+                foreach (string f in fileListing)
+                {
+                    fileListingBox.Items.Add(f);
+                }
+            }
+            catch(NullReferenceException) { }
+        }
+
 
         /* Context Menu */
         private void downloadToolStripMenuItem_Click(object sender, EventArgs e)
@@ -132,25 +182,29 @@ namespace Torrent_Search
 
         }
 
-        private Engine.TorrentResult getSelectedResult()
+        private TorrentResult getSelectedResult()
         {
+            //No torrent selected.
             if (dataGridView1.SelectedRows.Count == 0)
             {
                 MessageBox.Show("No torrent selected!");
                 return null;
             }
             
+            //Get torrent result from objectview.
             ObjectView<TorrentResult> sortedResult = (ObjectView<TorrentResult>)dataGridView1.SelectedRows[0].DataBoundItem;
             return sortedResult.Object;
         }
 
         private void openLink(string url)
         {
+            //Open link in shell
             Process p = new Process();
             ProcessStartInfo psi = new ProcessStartInfo();
             psi.FileName = url;
             p.StartInfo = psi;
             p.Start();            
         }
+
     }
 }

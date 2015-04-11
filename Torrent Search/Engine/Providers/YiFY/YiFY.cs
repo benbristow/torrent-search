@@ -17,7 +17,7 @@ namespace Torrent_Search.Engine.Providers.YiFY
         public async Task<List<TorrentResult>> getSearchResults(string query)
         {
             var torrentResults = new List<TorrentResult>();
-            var r = await doWebRequest(query);
+            var r = await doSearchRequest(query);
             var j = JsonConvert.DeserializeObject<JSON.Rootobject>(r);
 
             foreach (JSON.Movie movie in j.data.movies)
@@ -25,8 +25,7 @@ namespace Torrent_Search.Engine.Providers.YiFY
                 foreach (var torrent in movie.torrents)
                 {
                     var t = new TorrentResult();
-                    t.source = this.name;
-
+                    t.source = this;
                     t.title = movie.title_long + " " + torrent.quality;
                     t.torrentFile = torrent.url;
                     t.date = DateTime.Parse(torrent.date_uploaded);
@@ -40,6 +39,13 @@ namespace Torrent_Search.Engine.Providers.YiFY
             }
 
             return torrentResults;
+        }
+
+        public async override Task<List<String>> getFileListing(TorrentResult torrent)
+        {
+            var fileList = new List<String>();
+            fileList.Add("Engine does not support file listing");
+            return fileList;
         }
     }
 }

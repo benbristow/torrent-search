@@ -102,6 +102,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Engine\Providers\GetStrike\JSON\FileListing\ResultJSON.cs" />
     <None Include="packages.config" />
     <None Include="Properties\DataSources\Torrent_Search.Engine.TorrentResult.datasource" />
     <None Include="Properties\Settings.settings">
