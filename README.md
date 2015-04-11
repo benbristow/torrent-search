@@ -1,5 +1,5 @@
 # Torrent Search 
-## Because I couldn't be bothered to think of a better name.
+*Because I couldn't be bothered to think of a better name.*
 
 Torrent Search engine made in C#.
 
