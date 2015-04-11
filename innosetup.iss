@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Torrent Search"
-#define MyAppVersion "1.1.0.0-pre"
+#define MyAppVersion "1.2.0.0-pre"
 #define MyAppPublisher "Ben Bristow"
 #define MyAppURL "https://www.benbristow.co.uk/"
 #define MyAppExeName "Torrent Search.exe"
